@@ -1,5 +1,7 @@
 <head>
 	<title>ai rock paper scissors v0.1</title>
+	<link rel="stylesheet" type="text/css" href="./styles.css" />
+	<link rel="icon" type="image/x-icon" href="./favicon.png" />
 </head>
 <body>
 	<div id="instructions">
@@ -9,41 +11,71 @@
 			paper beats rock<br>
 		</p>
 	</div>
+	<div id="results">
+		<p>
+			games so far<br>
+			won:___<br>
+			tied:___<br>
+			lost:___<br>
+	</dive>	
 	<div id="game">
 		&nbsp
 	</div>
 	<div id="userInput">
-		<input type="text" id="plyInput" name="plyChoice" placeholder="select rock, paper, or scissors."/>
+		<input type="text" id="plyInput" name="plyChoice" placeholder="select rock, paper, or scissors." onkeydown="keyChecker(this)" />
 		<input type="button" id="btnSubmit" name="btnSubmit" value="submit answer"/>
 	</div>
 </body>
 
 <script>
 	var plyChoice, plyChoiceText, compChoice, compChoiceText, options;
-	options = ["rock","paper","scissors"];
+	options = ["rock","paper","scissors"], weights=[32,32,32];
 
 	document.getElementById("btnSubmit").addEventListener("click", logic);
-
-	function logic(){
-		plyChoiceText = document.getElementById("plyInput").value;
-		compChoice = Math.random(); // random number from 0-1
-
-		compChoice = Math.floor(compChoice * 3);// convert to [0,1,2]
-		compChoiceText = options[compChoice];
-
-		plyChoice = options.indexOf(plyChoiceText);
-
-		var result = (3+(plyChoice - compChoice)) % 3;
-		var message;
-		if (result == 0){
-			message = "you really picked '"+plyChoiceText+"'? i also picked '"+compChoiceText+"'. tied. booooooring."
-		}	else if (result ==1){
-			message = "you picked '"+plyChoiceText+"'??????? i picked '"+compChoiceText+"'. you won. play again, it won't happen next time."
-		} else {
-			message = "you really picked '"+plyChoiceText+"'. i picked '"+compChoiceText+"'. ha, loser."
+	function keyChecker(element){
+		if(event.key == "Enter"){
+			logic();
 		}
+	}
+	function logic(){
+		var message;
+		plyChoiceText = document.getElementById("plyInput").value;
+		if (options.includes(plyChoiceText.toLowerCase())){
+			compChoice = Math.random(); // random number from 0-1
 
+			// compChoice = Math.floor(compChoice * 3);// convert to [0,1,2]
+			compChoice *= (weights[0] + weights[1] + weights[2]);
+			// compChoiceText = options[compChoice];
+			compChoiceText = "rock";
+			if (compChoice > weights[0]){
+				compChoiceText = "paper"
+			}
+
+			if (compChoice > weights[0]+weights[1]){
+				compChoiceText = "scissors"
+			}
+
+			compChoice = options.indexOf(compChoiceText);
+			plyChoice = options.indexOf(plyChoiceText);
+
+			var result = (3+(plyChoice - compChoice)) % 3;
+			var message;
+			if (result == 0){
+				message = "you really picked '"+plyChoiceText+"'? i also picked '"+compChoiceText+"'. tied. booooooring."
+			}	else if (result ==1){
+				message = "you picked '"+plyChoiceText+"'??????? i picked '"+compChoiceText+"'. you won. play again, it won't happen next time."
+				weights[compChoice] *= .5;
+			} 	else {
+				message = "you really picked '"+plyChoiceText+"'. i picked '"+compChoiceText+"'. ha, loser."
+				weights[compChoice] *= 2;
+			}
+		}
+		else {
+			message = "thats now how you play the game headass";
+		}
 		document.getElementById("game").innerHTML =
-		 document.getElementById("game").innerHTML + "<p>" + message + "</p>"
-	 }
+			document.getElementById("game").innerHTML + "<p>" + message + "</p>";
+		document.getElementById("plyInput").value = "";
+		
+	}
 </script>
