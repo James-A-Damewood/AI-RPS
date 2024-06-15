@@ -14,10 +14,10 @@
 	<div id="results">
 		<p>
 			games so far<br>
-			won:___<br>
-			tied:___<br>
-			lost:___<br>
-	</dive>	
+			won:<span id = "winNo"></span><br>
+			tied:<span id = "tieNo"></span><br>
+			lost:<span id = "lostNo"></span><br>
+	</div>	
 	<div id="game">
 		&nbsp
 	</div>
@@ -30,7 +30,9 @@
 <script>
 	var plyChoice, plyChoiceText, compChoice, compChoiceText, options;
 	options = ["rock","paper","scissors"], weights=[32,32,32];
-
+	var win = 0;
+	var tied = 0;
+	var lost = 0;
 	document.getElementById("btnSubmit").addEventListener("click", logic);
 	function keyChecker(element){
 		if(event.key == "Enter"){
@@ -61,13 +63,18 @@
 			var result = (3+(plyChoice - compChoice)) % 3;
 			var message;
 			if (result == 0){
-				message = "you really picked '"+plyChoiceText+"'? i also picked '"+compChoiceText+"'. tied. booooooring."
-			}	else if (result ==1){
-				message = "you picked '"+plyChoiceText+"'??????? i picked '"+compChoiceText+"'. you won. play again, it won't happen next time."
+				message = "you really picked '"+plyChoiceText+"'? i also picked '"+compChoiceText+"'. tied. booooooring.";
+				tied = (tied + 1)
+			}	
+			else if (result ==1){
+				message = "you picked '"+plyChoiceText+"'??????? i picked '"+compChoiceText+"'. you won. play again, it won't happen next time.";
 				weights[compChoice] *= .5;
-			} 	else {
+				win = (win + 1);
+			} 	
+			else {
 				message = "you really picked '"+plyChoiceText+"'. i picked '"+compChoiceText+"'. ha, loser."
 				weights[compChoice] *= 2;
+				lost = (lost + 1)
 			}
 		}
 		else {
@@ -76,6 +83,8 @@
 		document.getElementById("game").innerHTML =
 			document.getElementById("game").innerHTML + "<p>" + message + "</p>";
 		document.getElementById("plyInput").value = "";
-		
+		document.getElementById("winNo").innerHTML = win;
+		document.getElementById("tieNo").innerHTML = tied;
+		document.getElementById("lostNo").innerHTML = lost;
 	}
 </script>
